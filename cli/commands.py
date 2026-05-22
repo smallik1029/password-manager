@@ -3,9 +3,18 @@ from vault.manager import VaultManager
 
 
 def cmd_add(vm: VaultManager) -> None:
-    site = input("Site: ")
-    username = input("Username: ")
+    site = input("Site: ").strip()
+    if not site:
+        print("Site cannot be empty.")
+        return
+    username = input("Username: ").strip()
+    if not username:
+        print("Username cannot be empty.")
+        return
     password = getpass.getpass("Password: ")
+    if not password:
+        print("Password cannot be empty.")
+        return
     vm.add(site, username, password)
     print(f"Entry for {site} saved.")
 
@@ -35,4 +44,4 @@ def cmd_delete(vm: VaultManager, site: str) -> None:
         vm.delete(site)
         print(f"Entry for {site} deleted.")
     else:
-        print(f"No entry found for {site}.")
+        print(f"No entry found for {site}.")    
