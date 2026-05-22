@@ -1,31 +1,8 @@
 import getpass
 from vault.manager import VaultManager
-from vault.store import vault_exists
 
 
-def get_master_password() -> str:
-    return getpass.getpass("Master password: ")
-
-
-def cmd_init():
-    if vault_exists():
-        print("Vault already exists.")
-        return
-    password = getpass.getpass("Create master password: ")
-    confirm = getpass.getpass("Confirm master password: ")
-    if password != confirm:
-        print("Passwords do not match.")
-        return
-    VaultManager(password)
-    print("Vault created.")
-
-
-def cmd_add():
-    try:
-        vm = VaultManager(get_master_password())
-    except ValueError:
-        print("Wrong master password.")
-        return
+def cmd_add(vm: VaultManager) -> None:
     site = input("Site: ")
     username = input("Username: ")
     password = getpass.getpass("Password: ")
@@ -33,12 +10,7 @@ def cmd_add():
     print(f"Entry for {site} saved.")
 
 
-def cmd_get(site: str):
-    try:
-        vm = VaultManager(get_master_password())
-    except ValueError:
-        print("Wrong master password.")
-        return
+def cmd_get(vm: VaultManager, site: str) -> None:
     entry = vm.get(site)
     if entry:
         print(f"Site:     {entry.site}")
@@ -49,12 +21,7 @@ def cmd_get(site: str):
         print(f"No entry found for {site}.")
 
 
-def cmd_list():
-    try:
-        vm = VaultManager(get_master_password())
-    except ValueError:
-        print("Wrong master password.")
-        return
+def cmd_list(vm: VaultManager) -> None:
     entries = vm.list_entries()
     if entries:
         for site in entries:
@@ -63,12 +30,7 @@ def cmd_list():
         print("No entries in vault.")
 
 
-def cmd_delete(site: str):
-    try:
-        vm = VaultManager(get_master_password())
-    except ValueError:
-        print("Wrong master password.")
-        return
+def cmd_delete(vm: VaultManager, site: str) -> None:
     if vm.get(site):
         vm.delete(site)
         print(f"Entry for {site} deleted.")

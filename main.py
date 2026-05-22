@@ -1,35 +1,62 @@
-import argparse
-from cli.commands import cmd_init, cmd_add, cmd_get, cmd_list, cmd_delete
+import getpass
+from vault.manager import VaultManager
+from vault.store import vault_exists
+from cli.commands import cmd_add, cmd_get, cmd_list, cmd_delete
+
+
+def unlock_vault() -> VaultManager | None:
+    if not vault_exists():
+        print("No vault found. Creating a new one.")
+        password = getpass.getpass("Create master password: ")
+        confirm = getpass.getpass("Confirm master password: ")
+        if password != confirm:
+            print("Passwords do not match.")
+            return None
+        vm = VaultManager(password)
+        print("Vault created.\n")
+        return vm
+    else:
+        try:
+            return VaultManager(getpass.getpass("Master password: "))
+        except ValueError:
+            print("Wrong master password.")
+            return None
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Local password manager")
-    subparsers = parser.add_subparsers(dest="command")
+    vm = unlock_vault()
+    if vm is None:
+        return
 
-    subparsers.add_parser("init", help="Create a new vault")
-    subparsers.add_parser("add", help="Add a new entry")
-    subparsers.add_parser("list", help="List all entries")
+    print("Vault unlocked. Commands: add, get <site>, list, delete <site>, exit\n")
 
-    get_parser = subparsers.add_parser("get", help="Get an entry")
-    get_parser.add_argument("site", help="Site name")
+    while True:
+        raw = input("> ").strip()
+        if not raw:
+            continue
 
-    delete_parser = subparsers.add_parser("delete", help="Delete an entry")
-    delete_parser.add_argument("site", help="Site name")
+        parts = raw.split(maxsplit=1)
+        command = parts[0].lower()
+        arg = parts[1] if len(parts) > 1 else None
 
-    args = parser.parse_args()
-
-    if args.command == "init":
-        cmd_init()
-    elif args.command == "add":
-        cmd_add()
-    elif args.command == "get":
-        cmd_get(args.site)
-    elif args.command == "list":
-        cmd_list()
-    elif args.command == "delete":
-        cmd_delete(args.site)
-    else:
-        parser.print_help()
+        if command == "exit":
+            break
+        elif command == "add":
+            cmd_add(vm)
+        elif command == "list":
+            cmd_list(vm)
+        elif command == "get":
+            if arg:
+                cmd_get(vm, arg)
+            else:
+                print("Usage: get <site>")
+        elif command == "delete":
+            if arg:
+                cmd_delete(vm, arg)
+            else:
+                print("Usage: delete <site>")
+        else:
+            print("Unknown command. Commands: add, get <site>, list, delete <site>, exit")
 
 
 if __name__ == "__main__":
