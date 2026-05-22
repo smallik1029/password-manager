@@ -3,18 +3,12 @@ from vault.manager import VaultManager
 
 
 def cmd_add(vm: VaultManager) -> None:
-    site = input("Site: ").strip()
-    if not site:
+    while not (site := input("Site: ").strip()):
         print("Site cannot be empty.")
-        return
-    username = input("Username: ").strip()
-    if not username:
+    while not (username := input("Username: ").strip()):
         print("Username cannot be empty.")
-        return
-    password = getpass.getpass("Password: ")
-    if not password:
+    while not (password := getpass.getpass("Password: ")):
         print("Password cannot be empty.")
-        return
     vm.add(site, username, password)
     print(f"Entry for {site} saved.")
 
