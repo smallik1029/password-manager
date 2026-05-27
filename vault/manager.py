@@ -3,7 +3,6 @@ from vault.store import save_vault, load_vault, load_salt, vault_exists
 from crypto.kdf import generate_salt, derive_key
 from models.entry import VaultEntry
 
-
 class VaultManager:
     def __init__(self, password: str):
         if vault_exists():
@@ -30,4 +29,9 @@ class VaultManager:
     def delete(self, site: str) -> None:
         if site in self.vault:
             del self.vault[site]
+            save_vault(self.vault, self.key, self.salt)
+
+    def update(self, site: str, username: str, password: str) -> None:
+        if site in self.vault:
+            self.vault[site] = VaultEntry(site, username, password).to_dict()
             save_vault(self.vault, self.key, self.salt)

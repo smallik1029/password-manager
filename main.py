@@ -1,8 +1,7 @@
 import getpass
 from vault.manager import VaultManager
 from vault.store import vault_exists
-from cli.commands import cmd_add, cmd_get, cmd_list, cmd_delete
-
+from cli.commands import cmd_add, cmd_get, cmd_list, cmd_delete, cmd_update
 
 def unlock_vault() -> VaultManager | None:
     if not vault_exists():
@@ -22,13 +21,12 @@ def unlock_vault() -> VaultManager | None:
             print("Wrong master password.")
             return None
 
-
 def main():
     vm = unlock_vault()
     if vm is None:
         return
 
-    print("Vault unlocked. Commands: add, get <site>, list, delete <site>, exit\n")
+    print("Vault unlocked. Commands: add, get <site>, list, delete <site>, update <site>, exit\n")
 
     while True:
         raw = input("> ").strip()
@@ -55,9 +53,13 @@ def main():
                 cmd_delete(vm, arg)
             else:
                 print("Usage: delete <site>")
+        elif command == "update":
+            if arg:
+                cmd_update(vm, arg)
+            else: 
+                print("Usage: update <site>")
         else:
-            print("Unknown command. Commands: add, get <site>, list, delete <site>, exit")
-
+            print("Unknown command. Commands: add, get <site>, list, delete <site>, update <site>, exit")
 
 if __name__ == "__main__":
     main()
