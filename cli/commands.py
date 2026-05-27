@@ -1,6 +1,7 @@
 import getpass
 import pyperclip
 from vault.manager import VaultManager
+from crypto.generator import generate_password
 
 # color constants
 GREEN = "\033[32m"
@@ -12,8 +13,14 @@ def cmd_add(vm: VaultManager) -> None:
         print(f"{RED}Site cannot be empty.{RESET}")
     while not (username := input("Username: ").strip()):
         print(f"{RED}Username cannot be empty.{RESET}")
-    while not (password := getpass.getpass("Password: ")):
-        print(f"{RED}Password cannot be empty.{RESET}")
+    while (choice := input("Generate password? (y/n): ").strip().lower()) not in ("y", "n"):
+        print(f"{RED}Please enter y or n.{RESET}")
+    if choice == "y":
+        password = generate_password()
+        print(f"Generated: {GREEN}{password}{RESET}")
+    else:
+        while not (password := getpass.getpass("Password: ")):
+            print(f"{RED}Password cannot be empty.{RESET}")
     vm.add(site, username, password)
     print(f"Entry for {GREEN}{site}{RESET} saved.")
 
