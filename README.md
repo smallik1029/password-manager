@@ -12,9 +12,12 @@ A local, command-line password manager built in Python. All credentials are encr
 - Master password never stored - derived into an encryption key at runtime.
 - Unique salt per vault prevents pre-computed password attacks.
 
+<br>
+
 ## Setup Instructions
 
 **Prerequisites:** Python 3.10+
+
 **1. Clone the repository:**
 ```
 git clone https://github.com/smallik1029/password-manager.git
@@ -32,7 +35,10 @@ python main.py
 ```
 
 On first run, you will be prompted to create a master password and a new vault will be created.
+
 For clarity, when you are typing any password (such as master password or site-specific password), the program will not display the letters as you type them for privacy reasons. Just type and press enter as normal.
+
+<br>
 
 ## Usage
 
