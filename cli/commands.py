@@ -1,4 +1,5 @@
 import getpass
+import pyperclip
 from vault.manager import VaultManager
 
 
@@ -16,9 +17,10 @@ def cmd_add(vm: VaultManager) -> None:
 def cmd_get(vm: VaultManager, site: str) -> None:
     entry = vm.get(site)
     if entry:
+        pyperclip.copy(entry.password)
         print(f"Site:     {entry.site}")
         print(f"Username: {entry.username}")
-        print(f"Password: {entry.password}")
+        print(f"Password: copied to clipboard")
         print(f"Created:  {entry.created_at}")
     else:
         print(f"No entry found for {site}.")
